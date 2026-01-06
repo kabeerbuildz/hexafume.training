@@ -177,7 +177,7 @@ Route::group(['middleware' => 'maintenance.mode'], function () {
      * ============================================================================
      */
 
-    Route::group(['middleware' => ['auth', 'verified', 'approved.instructor', 'role:instructor'], 'prefix' => 'instructor', 'as' => 'instructor.'], function () {
+    Route::group(['middleware' => ['auth', 'verified', 'role:instructor'], 'prefix' => 'instructor', 'as' => 'instructor.'], function () {
         Route::get('dashboard', [InstructorDashboardController::class, 'index'])->name('dashboard');
         // Profile setting routes
         Route::get('zoom-setting', [InstructorLiveCredentialController::class, 'index'])->name('zoom-setting.index');
