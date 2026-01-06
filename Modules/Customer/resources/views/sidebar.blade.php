@@ -1,5 +1,5 @@
 <li
-    class="nav-item dropdown {{ isRoute(['admin.all-customers','admin.all-instructors', 'admin.active-customers', 'admin.non-verified-customers', 'admin.banned-customers', 'admin.customer-show', 'admin.send-bulk-mail'], 'active') }}">
+    class="nav-item dropdown {{ isRoute(['admin.all-customers','admin.all-instructors', 'admin.create-instructor', 'admin.active-customers', 'admin.non-verified-customers', 'admin.banned-customers', 'admin.customer-show', 'admin.send-bulk-mail'], 'active') }}">
     <a href="javascript:void()" class="nav-link has-dropdown">
         <i class="fas fa-users"></i><span>{{ __('Manage Users') }}</span>
     </a>
@@ -16,6 +16,14 @@
                 {{ __('All Instructors') }}
             </a>
         </li>
+
+        @if(checkAdminHasPermission('customer.create'))
+        <li class="{{ isRoute('admin.create-instructor', 'active') }}">
+            <a class="nav-link" href="{{ route('admin.create-instructor') }}">
+                <i class="fas fa-user-plus"></i> {{ __('Create Instructor') }}
+            </a>
+        </li>
+        @endif
 
         <li class="{{ isRoute('admin.active-customers', 'active') }}">
             <a class="nav-link" href="{{ route('admin.active-customers') }}">

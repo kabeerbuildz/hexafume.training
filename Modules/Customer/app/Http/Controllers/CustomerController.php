@@ -18,6 +18,7 @@ use Illuminate\Support\Str;
 use Modules\Customer\app\Models\BannedHistory;
 use Modules\Location\app\Models\City;
 use Modules\Location\app\Models\State;
+use Modules\InstructorRequest\app\Models\InstructorRequest;
 
 class CustomerController extends Controller {
     use GetGlobalInformationTrait, RedirectHelperTrait;
@@ -108,6 +109,19 @@ class CustomerController extends Controller {
 
         // Send the email
         (new MailSenderService)->sendMailToUserFromTrait($subject, $message, 'single_user', $user);
+
+        // If user is instructor, create approved instructor request record
+        if ($user_type === 'instructor') {
+            InstructorRequest::updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'status' => 'approved',
+                    'payout_account' => null,
+                    'payout_information' => null,
+                    'extra_information' => null,
+                ]
+            );
+        }
     }
 
     public function index(Request $request) {
