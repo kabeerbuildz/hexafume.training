@@ -55,10 +55,17 @@ $categories = \Illuminate\Support\Facades\Cache::remember('header_categories', 3
                                     <span>{{ __('Register') }}</span>
                                 </a>
                             @else
-                                <a href="javascript:;" class="auth-btn auth-btn-enroll enroll-now-btn" data-bs-toggle="modal" data-bs-target="#enrollmentModal">
-                                    <i class="fas fa-graduation-cap"></i>
-                                    <span>{{ __('Enroll Now') }}</span>
-                                </a>
+                                @if(userAuth()->role === 'instructor')
+                                    <a href="{{ route('instructor.dashboard') }}" class="auth-btn auth-btn-enroll">
+                                        <i class="fas fa-graduation-cap"></i>
+                                        <span>{{ __('Go to Dashboard') }}</span>
+                                    </a>
+                                @else
+                                    <a href="javascript:;" class="auth-btn auth-btn-enroll enroll-now-btn" data-bs-toggle="modal" data-bs-target="#enrollmentModal">
+                                        <i class="fas fa-graduation-cap"></i>
+                                        <span>{{ __('Enroll Now') }}</span>
+                                    </a>
+                                @endif
                             @endguest
                         </div>
                     </div>
