@@ -81,7 +81,6 @@
                             <li><a href="{{ route('contact.index') }}" class="footer-link">{{ __('Contact Us') }}</a></li>
                             <li><a href="{{ route('custom-page', 'privacy-policy') }}" class="footer-link">{{ __('Privacy Policy') }}</a></li>
                             <li><a href="{{ route('custom-page', 'terms-and-conditions') }}" class="footer-link">{{ __('Terms and Conditions') }}</a></li>
-                            <li><a href="{{ route('become-instructor') }}" class="footer-link">{{ __('Become Teacher') }}</a></li>
                             <li><a href="{{ route('all-instructors') }}" class="footer-link">{{ __('All Instructors') }}</a></li>
                         </ul>
                     </div>

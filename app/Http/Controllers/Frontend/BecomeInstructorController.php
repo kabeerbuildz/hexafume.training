@@ -16,42 +16,24 @@ class BecomeInstructorController extends Controller
 
     function index(): View|RedirectResponse
     {
-        if ($this->checkIfApproveInstructor()) return to_route('instructor.dashboard');
+        // Instructors can only be added by admin, not self-registration
+        if ($this->checkIfApproveInstructor()) {
+            return to_route('instructor.dashboard');
+        }
 
-        $instructorRequestSetting = InstructorRequestSetting::first();
-        $withdrawMethods = WithdrawMethod::where('status', 'active')->get();
-        return view('frontend.pages.become-instructor', compact('withdrawMethods', 'instructorRequestSetting'));
+        // Redirect to student dashboard with message
+        return redirect()->route('student.dashboard')->with([
+            'messege' => __('Instructors can only be added by admin. Please contact administrator to become an instructor.'),
+            'alert-type' => 'error'
+        ]);
     }
 
     function store(BecomeInstructorStoreRequest $request): RedirectResponse
     {
-        $user = auth('web')->user();
-        $status = $user->role == 'instructor' ? 'approved' : 'pending';
-        $instructorRequest = InstructorRequest::updateOrCreate(
-            ['user_id' => $user->id],
-            [
-                'status' => $status,
-                'payout_account' => $request->payout_account,
-                'payout_information' => $request->payout_information,
-                'extra_information' => $request->extra_information,
-            ]
-        );
-
-        if($request->has('certificate')) {
-            $filePath = file_upload($request->certificate);
-            $instructorRequest->certificate = $filePath;
-            $instructorRequest->save();
-        }
-
-        if($request->has('identity_scan')) {
-            $filePath = file_upload($request->identity_scan);
-            $instructorRequest->identity_scan = $filePath;
-            $instructorRequest->save();
-        }
-
+        // Instructors can only be added by admin, not self-registration
         return redirect()->route('student.dashboard')->with([
-            'success' => __('Instructor request submitted successfully we will let you know when your account is approved'),
-            'alert-type' => 'success'
+            'messege' => __('Instructors can only be added by admin. Please contact administrator to become an instructor.'),
+            'alert-type' => 'error'
         ]);
     }
 

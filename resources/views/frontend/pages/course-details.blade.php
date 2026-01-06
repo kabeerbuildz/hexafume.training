@@ -15,7 +15,7 @@
     <!-- breadcrumb-area -->
     <x-frontend.breadcrumb :title="__('Course Details')" :links="[
         ['url' => route('home'), 'text' => __('Home')],
-        ['url' => route('become-instructor'), 'text' => __('Course Details')],
+        ['url' => route('courses'), 'text' => __('Courses')],
     ]" />
     <!-- breadcrumb-area-end -->
 

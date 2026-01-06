@@ -39,15 +39,6 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="dashboard__instructor-info-right">
-                        @if (instructorStatus() == 'approved')
-                        <a href="{{ route('instructor.dashboard') }}" class="btn btn-two arrow-btn">{{ __('Instructor Dashboard') }} <img
-                            src="{{ asset('frontend/img/icons/right_arrow.svg') }}" alt="img" class="injectable"></a>
-                        @elseif (instructorStatus() != 'pending')
-                        <a href="{{ route('become-instructor') }}" class="btn btn-two arrow-btn">{{ __('Become an Instructor') }} <img
-                            src="{{ asset('frontend/img/icons/right_arrow.svg') }}" alt="img" class="injectable"></a>
-                        @endif
-                    </div>
                 </div>
             </div>
             <div class="row">

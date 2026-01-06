@@ -17,7 +17,11 @@ class ApprovedInstructorMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         if(!instructorStatus() || instructorStatus() && instructorStatus() != UserStatus::APPROVED->value) {
-            return redirect()->route('become-instructor');
+            // Instructors can only be added by admin, redirect to student dashboard
+            return redirect()->route('student.dashboard')->with([
+                'messege' => __('You are not an approved instructor. Please contact admin to become an instructor.'),
+                'alert-type' => 'error'
+            ]);
         }
 
         return $next($request);

@@ -23,8 +23,7 @@
                 </path>
             </svg>
             <div>
-                {{ __('Your request to become instructor has been rejected. Please resubmit your request with valid information') }}
-                <a href="{{ route('become-instructor') }}">{{ __('here') }}</a>
+                {{ __('Your request to become instructor has been rejected. Instructors can only be added by admin. Please contact administrator.') }}
             </div>
         </div>
     @endif

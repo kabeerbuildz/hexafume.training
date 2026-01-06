@@ -46,9 +46,9 @@ Route::group(['middleware' => 'maintenance.mode'], function () {
     Route::get('states/{country_id}', [HomePageController::class, 'states'])->name('states');
     Route::get('cities/{state_id}', [HomePageController::class, 'cities'])->name('cities');
 
-    /** become a instructor */
-    Route::get('become-instructor', [BecomeInstructorController::class, 'index'])->name('become-instructor')->middleware('auth');
-    Route::post('become-instructor', [BecomeInstructorController::class, 'store'])->name('become-instructor.create')->middleware('auth');
+    /** become a instructor - DISABLED: Instructors can only be added by admin */
+    // Route::get('become-instructor', [BecomeInstructorController::class, 'index'])->name('become-instructor')->middleware('auth');
+    // Route::post('become-instructor', [BecomeInstructorController::class, 'store'])->name('become-instructor.create')->middleware('auth');
 
     Route::get('courses', [CoursePageController::class, 'index'])->name('courses');
     Route::get('fetch-courses', [CoursePageController::class, 'fetchCourses'])->name('fetch-courses');

@@ -276,18 +276,6 @@ $categories = \Illuminate\Support\Facades\Cache::remember('header_categories', 3
                                                 </div>
                                             </div>
                                             <div class="dropdown-divider"></div>
-                                            @if (instructorStatus() == 'approved')
-                                            <a href="{{ route('instructor.dashboard') }}" class="dropdown-item">
-                                                <i class="fas fa-chalkboard-teacher"></i>
-                                                <span>{{ __('Instructor Dashboard') }}</span>
-                                                <i class="fas fa-chevron-right"></i>
-                                            </a>
-                                            @endif
-                                            <a href="{{ route('student.dashboard') }}" class="dropdown-item">
-                                                <i class="fas fa-graduation-cap"></i>
-                                                <span>{{ __('Student Dashboard') }}</span>
-                                                <i class="fas fa-chevron-right"></i>
-                                            </a>
                                             <a href="{{ userAuth()->role == 'instructor' ? route('instructor.setting.index') : route('student.setting.index') }}" class="dropdown-item">
                                                 <i class="fas fa-user-cog"></i>
                                                 <span>{{ __('Profile') }}</span>
