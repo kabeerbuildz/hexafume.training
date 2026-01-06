@@ -103,6 +103,9 @@ class CoursePageController extends Controller
         $course = Course::active()->with(['chapters' => function($query) {
             $query->orderBy('order', 'asc')->with(['chapterItems', 'chapterItems.lesson', 'chapterItems.quiz']);
         }])
+        ->with(['courseFeeStructures' => function($q) {
+            $q->where('status', 1);
+        }])
         ->withCount(['reviews' => function($query) {
             $query->where('status', 1)->whereHas('course')->whereHas('user');
         }])

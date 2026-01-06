@@ -15,7 +15,14 @@
                                 $allCoursesIds = json_decode(
                                     $featuredCourse?->all_category_ids ? $featuredCourse->all_category_ids : '[]',
                                 );
-                                $allCourses = App\Models\Course::with('favoriteBy','category.translation', 'instructor:id,name')
+                                $allCourses = App\Models\Course::with([
+                                    'favoriteBy',
+                                    'category.translation', 
+                                    'instructor:id,name',
+                                    'courseFeeStructures' => function($q) {
+                                        $q->where('status', 1);
+                                    }
+                                ])
                                     ->whereIn('id', $allCoursesIds)
                                     ->withCount([
                                         'reviews as avg_rating' => function ($query) {
@@ -238,12 +245,21 @@
                                                 </div>
                                             @endif
 
-                                            @if ($course->price == 0)
-                                                <h5 class="price">{{ __('Free') }}</h5>
-                                            @elseif ($course->price > 0 && $course->discount > 0)
-                                                <h5 class="price">{{ currency($course->discount) }}</h5>
+                                            @php
+                                                $feeStructures = $course->courseFeeStructures ?? collect([]);
+                                                $minFee = $feeStructures->min('course_fee');
+                                                $maxFee = $feeStructures->max('course_fee');
+                                            @endphp
+                                            @if($feeStructures->count() > 0 && $minFee !== null)
+                                                @if($minFee == 0)
+                                                    <h5 class="price">{{ __('Free') }}</h5>
+                                                @elseif($minFee == $maxFee)
+                                                    <h5 class="price">{{ currency($minFee) }}</h5>
+                                                @else
+                                                    <h5 class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</h5>
+                                                @endif
                                             @else
-                                                <h5 class="price">{{ currency($course->price) }}</h5>
+                                                <h5 class="price">{{ __('Contact for Price') }}</h5>
                                             @endif
                                         </div>
                                     </div>
@@ -318,12 +334,21 @@
                                                     </a>
                                                 </div>
                                             @endif
-                                            @if ($course->price == 0)
-                                                <h5 class="price">{{ __('Free') }}</h5>
-                                            @elseif ($course->price > 0 && $course->discount > 0)
-                                                <h5 class="price">{{ currency($course->discount) }}</h5>
+                                            @php
+                                                $feeStructures = $course->courseFeeStructures ?? collect([]);
+                                                $minFee = $feeStructures->min('course_fee');
+                                                $maxFee = $feeStructures->max('course_fee');
+                                            @endphp
+                                            @if($feeStructures->count() > 0 && $minFee !== null)
+                                                @if($minFee == 0)
+                                                    <h5 class="price">{{ __('Free') }}</h5>
+                                                @elseif($minFee == $maxFee)
+                                                    <h5 class="price">{{ currency($minFee) }}</h5>
+                                                @else
+                                                    <h5 class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</h5>
+                                                @endif
                                             @else
-                                                <h5 class="price">{{ currency($course->price) }}</h5>
+                                                <h5 class="price">{{ __('Contact for Price') }}</h5>
                                             @endif
                                         </div>
                                     </div>
@@ -398,12 +423,21 @@
                                                     </a>
                                                 </div>
                                             @endif
-                                            @if ($course->price == 0)
-                                                <h5 class="price">{{ __('Free') }}</h5>
-                                            @elseif ($course->price > 0 && $course->discount > 0)
-                                                <h5 class="price">{{ currency($course->discount) }}</h5>
+                                            @php
+                                                $feeStructures = $course->courseFeeStructures ?? collect([]);
+                                                $minFee = $feeStructures->min('course_fee');
+                                                $maxFee = $feeStructures->max('course_fee');
+                                            @endphp
+                                            @if($feeStructures->count() > 0 && $minFee !== null)
+                                                @if($minFee == 0)
+                                                    <h5 class="price">{{ __('Free') }}</h5>
+                                                @elseif($minFee == $maxFee)
+                                                    <h5 class="price">{{ currency($minFee) }}</h5>
+                                                @else
+                                                    <h5 class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</h5>
+                                                @endif
                                             @else
-                                                <h5 class="price">{{ currency($course->price) }}</h5>
+                                                <h5 class="price">{{ __('Contact for Price') }}</h5>
                                             @endif
                                         </div>
                                     </div>
@@ -478,12 +512,21 @@
                                                     </a>
                                                 </div>
                                             @endif
-                                            @if ($course->price == 0)
-                                                <h5 class="price">{{ __('Free') }}</h5>
-                                            @elseif ($course->price > 0 && $course->discount > 0)
-                                                <h5 class="price">{{ currency($course->discount) }}</h5>
+                                            @php
+                                                $feeStructures = $course->courseFeeStructures ?? collect([]);
+                                                $minFee = $feeStructures->min('course_fee');
+                                                $maxFee = $feeStructures->max('course_fee');
+                                            @endphp
+                                            @if($feeStructures->count() > 0 && $minFee !== null)
+                                                @if($minFee == 0)
+                                                    <h5 class="price">{{ __('Free') }}</h5>
+                                                @elseif($minFee == $maxFee)
+                                                    <h5 class="price">{{ currency($minFee) }}</h5>
+                                                @else
+                                                    <h5 class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</h5>
+                                                @endif
                                             @else
-                                                <h5 class="price">{{ currency($course->price) }}</h5>
+                                                <h5 class="price">{{ __('Contact for Price') }}</h5>
                                             @endif
                                         </div>
                                     </div>
@@ -558,12 +601,21 @@
                                                     </a>
                                                 </div>
                                             @endif
-                                            @if ($course->price == 0)
-                                                <h5 class="price">{{ __('Free') }}</h5>
-                                            @elseif ($course->price > 0 && $course->discount > 0)
-                                                <h5 class="price">{{ currency($course->discount) }}</h5>
+                                            @php
+                                                $feeStructures = $course->courseFeeStructures ?? collect([]);
+                                                $minFee = $feeStructures->min('course_fee');
+                                                $maxFee = $feeStructures->max('course_fee');
+                                            @endphp
+                                            @if($feeStructures->count() > 0 && $minFee !== null)
+                                                @if($minFee == 0)
+                                                    <h5 class="price">{{ __('Free') }}</h5>
+                                                @elseif($minFee == $maxFee)
+                                                    <h5 class="price">{{ currency($minFee) }}</h5>
+                                                @else
+                                                    <h5 class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</h5>
+                                                @endif
                                             @else
-                                                <h5 class="price">{{ currency($course->price) }}</h5>
+                                                <h5 class="price">{{ __('Contact for Price') }}</h5>
                                             @endif
                                         </div>
                                     </div>
@@ -638,12 +690,21 @@
                                                     </a>
                                                 </div>
                                             @endif
-                                            @if ($course->price == 0)
-                                                <h5 class="price">{{ __('Free') }}</h5>
-                                            @elseif ($course->price > 0 && $course->discount > 0)
-                                                <h5 class="price">{{ currency($course->discount) }}</h5>
+                                            @php
+                                                $feeStructures = $course->courseFeeStructures ?? collect([]);
+                                                $minFee = $feeStructures->min('course_fee');
+                                                $maxFee = $feeStructures->max('course_fee');
+                                            @endphp
+                                            @if($feeStructures->count() > 0 && $minFee !== null)
+                                                @if($minFee == 0)
+                                                    <h5 class="price">{{ __('Free') }}</h5>
+                                                @elseif($minFee == $maxFee)
+                                                    <h5 class="price">{{ currency($minFee) }}</h5>
+                                                @else
+                                                    <h5 class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</h5>
+                                                @endif
                                             @else
-                                                <h5 class="price">{{ currency($course->price) }}</h5>
+                                                <h5 class="price">{{ __('Contact for Price') }}</h5>
                                             @endif
                                         </div>
                                     </div>

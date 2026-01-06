@@ -489,14 +489,21 @@
                     <div class="courses__details-sidebar">
                         <div class="courses__cost-wrap">
                             <span>{{ __('This Course Fee') }}:</span>
-                            @if ($course->price == 0)
-                                <h2 class="title">{{ __('Free') }}</h2>
-                            @elseif ($course->discount)
-                                <h2 class="title">{{ currency($course->discount) }}
-                                    <del>{{ currency($course->price) }}</del>
-                                </h2>
+                            @php
+                                $feeStructures = $course->courseFeeStructures ?? collect([]);
+                                $minFee = $feeStructures->min('course_fee');
+                                $maxFee = $feeStructures->max('course_fee');
+                            @endphp
+                            @if($feeStructures->count() > 0 && $minFee !== null)
+                                @if($minFee == 0)
+                                    <h2 class="title">{{ __('Free') }}</h2>
+                                @elseif($minFee == $maxFee)
+                                    <h2 class="title">{{ currency($minFee) }}</h2>
+                                @else
+                                    <h2 class="title">{{ currency($minFee) }} - {{ currency($maxFee) }}</h2>
+                                @endif
                             @else
-                                <h2 class="title">{{ currency($course->price) }}</h2>
+                                <h2 class="title">{{ __('Contact for Price') }}</h2>
                             @endif
 
                         </div>
@@ -570,24 +577,45 @@
                         </div>
                         <div class="courses__details-enroll">
                             <div class="tg-button-wrap">
-                                @if (in_array($course->id, session('enrollments') ?? []))
-                                    <a href="{{ route('student.enrolled-courses') }}"
-                                        class="btn btn-two arrow-btn already-enrolled-btn" data-id="">
-                                        <span class="text">{{ __('Enrolled') }}</span>
-                                        <i class="flaticon-arrow-right"></i>
-                                    </a>
-                                @elseif ($course->enrollments->count() >= $course->capacity && $course->capacity != null)
-                                    <a href="javascript:;" class="btn btn-two arrow-btn" data-id="{{ $course->id }}">
-                                        <span class="text">{{ __('Booked') }}</span>
-                                        <i class="flaticon-arrow-right"></i>
-                                    </a>
+                                @auth('web')
+                                    @if(userAuth()->role === 'instructor')
+                                        <a href="{{ route('instructor.dashboard') }}"
+                                            class="btn btn-two arrow-btn">
+                                            <span class="text">{{ __('Go to Dashboard') }}</span>
+                                            <i class="flaticon-arrow-right"></i>
+                                        </a>
+                                    @elseif (in_array($course->id, session('enrollments') ?? []))
+                                        <a href="{{ route('student.enrolled-courses') }}"
+                                            class="btn btn-two arrow-btn already-enrolled-btn" data-id="">
+                                            <span class="text">{{ __('Enrolled') }}</span>
+                                            <i class="flaticon-arrow-right"></i>
+                                        </a>
+                                    @elseif ($course->enrollments->count() >= $course->capacity && $course->capacity != null)
+                                        <a href="javascript:;" class="btn btn-two arrow-btn" data-id="{{ $course->id }}">
+                                            <span class="text">{{ __('Booked') }}</span>
+                                            <i class="flaticon-arrow-right"></i>
+                                        </a>
+                                    @else
+                                        <a href="javascript:;" class="btn btn-two arrow-btn add-to-cart"
+                                            data-id="{{ $course->id }}">
+                                            <span class="text">{{ __('Add To Cart') }}</span>
+                                            <i class="flaticon-arrow-right"></i>
+                                        </a>
+                                    @endif
                                 @else
-                                    <a href="javascript:;" class="btn btn-two arrow-btn add-to-cart"
-                                        data-id="{{ $course->id }}">
-                                        <span class="text">{{ __('Add To Cart') }}</span>
-                                        <i class="flaticon-arrow-right"></i>
-                                    </a>
-                                @endif
+                                    @if ($course->enrollments->count() >= $course->capacity && $course->capacity != null)
+                                        <a href="javascript:;" class="btn btn-two arrow-btn" data-id="{{ $course->id }}">
+                                            <span class="text">{{ __('Booked') }}</span>
+                                            <i class="flaticon-arrow-right"></i>
+                                        </a>
+                                    @else
+                                        <a href="javascript:;" class="btn btn-two arrow-btn add-to-cart"
+                                            data-id="{{ $course->id }}">
+                                            <span class="text">{{ __('Add To Cart') }}</span>
+                                            <i class="flaticon-arrow-right"></i>
+                                        </a>
+                                    @endif
+                                @endauth
                             </div>
                             @if (Module::has('GiftCourse') && Module::isEnabled('GiftCourse'))
                                 <div class="d-block text-center mt-3">
@@ -634,11 +662,26 @@
     @if ($setting->google_tagmanager_status == 'active' && $marketing_setting?->course_details)
         <script>
             $(document).ready(function() {
+                @php
+                    $feeStructures = $course->courseFeeStructures ?? collect([]);
+                    $minFee = $feeStructures->min('course_fee');
+                    $maxFee = $feeStructures->max('course_fee');
+                    $displayPrice = 'Contact for Price';
+                    if($feeStructures->count() > 0 && $minFee !== null) {
+                        if($minFee == 0) {
+                            $displayPrice = 'Free';
+                        } elseif($minFee == $maxFee) {
+                            $displayPrice = currency($minFee);
+                        } else {
+                            $displayPrice = currency($minFee) . ' - ' . currency($maxFee);
+                        }
+                    }
+                @endphp
                 dataLayer.push({
                     'event': 'courseDetails',
                     'courses': {
                         'name': '{{ $course?->title }}',
-                        'price': '{{ currency($course->price) }}',
+                        'price': '{{ $displayPrice }}',
                         'instructor': '{{ $course->instructor->name }}',
                         'category': '{{ $course->category->translation->name }}',
                         'lessons': '{{ $courseLessonCount }}',

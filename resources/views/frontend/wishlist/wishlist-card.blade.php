@@ -1,7 +1,9 @@
 @php
     $wishlistCourses = userAuth()
         ->favoriteCourses()
-        ->with('category.translation', 'instructor:id,name')
+        ->with(['category.translation', 'instructor:id,name', 'courseFeeStructures' => function($q) {
+            $q->where('status', 1);
+        }])
         ->withCount([
             'reviews as avg_rating' => function ($query) {
                 $query->select(DB::raw('coalesce(avg(rating), 0)'));
@@ -22,12 +24,21 @@
                 <div class="courses__item-thumb-three shine__animate-link">
                     <a href="{{ route('course.show', $course->slug) }}"><img
                             src="{{ asset($course->thumbnail) }}" alt="img"></a>
-                    @if ($course->price == 0)
-                        <span class="courses__price">{{ __('Free') }}</span>
-                    @elseif ($course->price > 0 && $course->discount > 0)
-                        <span class="courses__price">{{ currency($course->discount) }}</span>
+                    @php
+                        $feeStructures = $course->courseFeeStructures ?? collect([]);
+                        $minFee = $feeStructures->min('course_fee');
+                        $maxFee = $feeStructures->max('course_fee');
+                    @endphp
+                    @if($feeStructures->count() > 0 && $minFee !== null)
+                        @if($minFee == 0)
+                            <span class="courses__price">{{ __('Free') }}</span>
+                        @elseif($minFee == $maxFee)
+                            <span class="courses__price">{{ currency($minFee) }}</span>
+                        @else
+                            <span class="courses__price">{{ currency($minFee) }} - {{ currency($maxFee) }}</span>
+                        @endif
                     @else
-                        <span class="courses__price">{{ currency($course->price) }}</span>
+                        <span class="courses__price">{{ __('Contact for Price') }}</span>
                     @endif
                 </div>
                 <div class="courses__item-content-three">

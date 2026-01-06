@@ -390,7 +390,11 @@ class HomePageController extends Controller {
             ->firstOrFail();
         $experiences = UserExperience::where(['user_id' => $id])->get();
         $educations = UserEducation::where(['user_id' => $id])->get();
-        $courses = Course::active()->where(['instructor_id' => $id])->orderBy('id', 'desc')->get();
+        $courses = Course::active()->where(['instructor_id' => $id])
+            ->with(['courseFeeStructures' => function($q) {
+                $q->where('status', 1);
+            }])
+            ->orderBy('id', 'desc')->get();
         $badges = Badge::where(['status' => 1])->get()->groupBy('key');
         return view('frontend.pages.instructor-details', compact('instructor', 'experiences', 'educations', 'courses', 'badges'));
     }

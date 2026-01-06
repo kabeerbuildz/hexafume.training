@@ -12,7 +12,14 @@
                             $allCoursesIds = json_decode(
                                 $featuredCourse?->all_category_ids ? $featuredCourse->all_category_ids : '[]',
                             );
-                            $allCourses = App\Models\Course::with('favoriteBy','category.translation', 'instructor:id,name')
+                            $allCourses = App\Models\Course::with([
+                                'favoriteBy',
+                                'category.translation', 
+                                'instructor:id,name',
+                                'courseFeeStructures' => function($q) {
+                                    $q->where('status', 1);
+                                }
+                            ])
                                 ->whereIn('id', $allCoursesIds)
                                 ->withCount([
                                     'reviews as avg_rating' => function ($query) {
@@ -40,10 +47,14 @@
                                         ->where('id', $featuredCourse->category_one)
                                         ->first();
                                     $categoryOneIds = json_decode($featuredCourse->category_one_ids);
-                                    $categoryOneCourses = App\Models\Course::with(
-                                        'favoriteBy','category.translation',
+                                    $categoryOneCourses = App\Models\Course::with([
+                                        'favoriteBy',
+                                        'category.translation',
                                         'instructor:id,name',
-                                    )
+                                        'courseFeeStructures' => function($q) {
+                                            $q->where('status', 1);
+                                        }
+                                    ])
                                         ->whereIn('id', $categoryOneIds)
                                         ->withCount([
                                             'reviews as avg_rating' => function ($query) {
@@ -67,10 +78,14 @@
                                         ->where('id', $featuredCourse->category_two)
                                         ->first();
                                     $categoryTwoIds = json_decode($featuredCourse->category_two_ids);
-                                    $categoryTwoCourses = App\Models\Course::with(
-                                        'favoriteBy','category.translation',
+                                    $categoryTwoCourses = App\Models\Course::with([
+                                        'favoriteBy',
+                                        'category.translation',
                                         'instructor:id,name',
-                                    )
+                                        'courseFeeStructures' => function($q) {
+                                            $q->where('status', 1);
+                                        }
+                                    ])
                                         ->whereIn('id', $categoryTwoIds)
                                         ->withCount([
                                             'reviews as avg_rating' => function ($query) {
@@ -96,10 +111,14 @@
                                         ->where('id', $featuredCourse->category_three)
                                         ->first();
                                     $categoryThreeIds = json_decode($featuredCourse->category_three_ids);
-                                    $categoryThreeCourses = App\Models\Course::with(
-                                        'favoriteBy','category.translation',
+                                    $categoryThreeCourses = App\Models\Course::with([
+                                        'favoriteBy',
+                                        'category.translation',
                                         'instructor:id,name',
-                                    )
+                                        'courseFeeStructures' => function($q) {
+                                            $q->where('status', 1);
+                                        }
+                                    ])
                                         ->whereIn('id', $categoryThreeIds)
                                         ->withCount([
                                             'reviews as avg_rating' => function ($query) {
@@ -191,13 +210,22 @@
                                     </div>
                                     <div class="courses__item-content-seven">
                                         <ul class="courses__item-meta list-wrap">
-                                            @if ($course->price == 0)
-                                            <li class="price">{{ __('Free') }}</li>
-                                        @elseif ($course->price > 0 && $course->discount > 0)
-                                            <li class="price">{{ currency($course->discount) }}</li>
-                                        @else
-                                        <li class="price">{{ currency($course->price) }}</li>
-                                        @endif
+                                            @php
+                                                $feeStructures = $course->courseFeeStructures ?? collect([]);
+                                                $minFee = $feeStructures->min('course_fee');
+                                                $maxFee = $feeStructures->max('course_fee');
+                                            @endphp
+                                            @if($feeStructures->count() > 0 && $minFee !== null)
+                                                @if($minFee == 0)
+                                                    <li class="price">{{ __('Free') }}</li>
+                                                @elseif($minFee == $maxFee)
+                                                    <li class="price">{{ currency($minFee) }}</li>
+                                                @else
+                                                    <li class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</li>
+                                                @endif
+                                            @else
+                                                <li class="price">{{ __('Contact for Price') }}</li>
+                                            @endif
                                         <li class="courses__wishlist">
                                             <a  href="javascript:;" class="wsus-wishlist-btn" aria-label="WishList" data-slug="{{ $course?->slug }}">
                                                 <i class="{{ $course?->favorite_by_client ? 'fas' : 'far' }} fa-heart"></i>
@@ -247,13 +275,22 @@
                                     </div>
                                     <div class="courses__item-content-seven">
                                         <ul class="courses__item-meta list-wrap">
-                                            @if ($course->price == 0)
-                                            <li class="price">{{ __('Free') }}</li>
-                                        @elseif ($course->price > 0 && $course->discount > 0)
-                                            <li class="price">{{ currency($course->discount) }}</li>
-                                        @else
-                                        <li class="price">{{ currency($course->price) }}</li>
-                                        @endif
+                                            @php
+                                                $feeStructures = $course->courseFeeStructures ?? collect([]);
+                                                $minFee = $feeStructures->min('course_fee');
+                                                $maxFee = $feeStructures->max('course_fee');
+                                            @endphp
+                                            @if($feeStructures->count() > 0 && $minFee !== null)
+                                                @if($minFee == 0)
+                                                    <li class="price">{{ __('Free') }}</li>
+                                                @elseif($minFee == $maxFee)
+                                                    <li class="price">{{ currency($minFee) }}</li>
+                                                @else
+                                                    <li class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</li>
+                                                @endif
+                                            @else
+                                                <li class="price">{{ __('Contact for Price') }}</li>
+                                            @endif
                                         <li class="courses__wishlist">
                                             <a  href="javascript:;" class="wsus-wishlist-btn" aria-label="WishList" data-slug="{{ $course?->slug }}">
                                                 <i class="{{ $course?->favorite_by_client ? 'fas' : 'far' }} fa-heart"></i>
@@ -303,13 +340,22 @@
                                     </div>
                                     <div class="courses__item-content-seven">
                                         <ul class="courses__item-meta list-wrap">
-                                            @if ($course->price == 0)
-                                            <li class="price">{{ __('Free') }}</li>
-                                        @elseif ($course->price > 0 && $course->discount > 0)
-                                            <li class="price">{{ currency($course->discount) }}</li>
-                                        @else
-                                        <li class="price">{{ currency($course->price) }}</li>
-                                        @endif
+                                            @php
+                                                $feeStructures = $course->courseFeeStructures ?? collect([]);
+                                                $minFee = $feeStructures->min('course_fee');
+                                                $maxFee = $feeStructures->max('course_fee');
+                                            @endphp
+                                            @if($feeStructures->count() > 0 && $minFee !== null)
+                                                @if($minFee == 0)
+                                                    <li class="price">{{ __('Free') }}</li>
+                                                @elseif($minFee == $maxFee)
+                                                    <li class="price">{{ currency($minFee) }}</li>
+                                                @else
+                                                    <li class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</li>
+                                                @endif
+                                            @else
+                                                <li class="price">{{ __('Contact for Price') }}</li>
+                                            @endif
                                         <li class="courses__wishlist">
                                             <a  href="javascript:;" class="wsus-wishlist-btn" aria-label="WishList" data-slug="{{ $course?->slug }}">
                                                 <i class="{{ $course?->favorite_by_client ? 'fas' : 'far' }} fa-heart"></i>
@@ -359,13 +405,22 @@
                                     </div>
                                     <div class="courses__item-content-seven">
                                         <ul class="courses__item-meta list-wrap">
-                                            @if ($course->price == 0)
-                                            <li class="price">{{ __('Free') }}</li>
-                                        @elseif ($course->price > 0 && $course->discount > 0)
-                                            <li class="price">{{ currency($course->discount) }}</li>
-                                        @else
-                                        <li class="price">{{ currency($course->price) }}</li>
-                                        @endif
+                                            @php
+                                                $feeStructures = $course->courseFeeStructures ?? collect([]);
+                                                $minFee = $feeStructures->min('course_fee');
+                                                $maxFee = $feeStructures->max('course_fee');
+                                            @endphp
+                                            @if($feeStructures->count() > 0 && $minFee !== null)
+                                                @if($minFee == 0)
+                                                    <li class="price">{{ __('Free') }}</li>
+                                                @elseif($minFee == $maxFee)
+                                                    <li class="price">{{ currency($minFee) }}</li>
+                                                @else
+                                                    <li class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</li>
+                                                @endif
+                                            @else
+                                                <li class="price">{{ __('Contact for Price') }}</li>
+                                            @endif
                                         <li class="courses__wishlist">
                                             <a  href="javascript:;" class="wsus-wishlist-btn" aria-label="WishList" data-slug="{{ $course?->slug }}">
                                                 <i class="{{ $course?->favorite_by_client ? 'fas' : 'far' }} fa-heart"></i>
@@ -415,13 +470,22 @@
                                     </div>
                                     <div class="courses__item-content-seven">
                                         <ul class="courses__item-meta list-wrap">
-                                            @if ($course->price == 0)
-                                            <li class="price">{{ __('Free') }}</li>
-                                        @elseif ($course->price > 0 && $course->discount > 0)
-                                            <li class="price">{{ currency($course->discount) }}</li>
-                                        @else
-                                        <li class="price">{{ currency($course->price) }}</li>
-                                        @endif
+                                            @php
+                                                $feeStructures = $course->courseFeeStructures ?? collect([]);
+                                                $minFee = $feeStructures->min('course_fee');
+                                                $maxFee = $feeStructures->max('course_fee');
+                                            @endphp
+                                            @if($feeStructures->count() > 0 && $minFee !== null)
+                                                @if($minFee == 0)
+                                                    <li class="price">{{ __('Free') }}</li>
+                                                @elseif($minFee == $maxFee)
+                                                    <li class="price">{{ currency($minFee) }}</li>
+                                                @else
+                                                    <li class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</li>
+                                                @endif
+                                            @else
+                                                <li class="price">{{ __('Contact for Price') }}</li>
+                                            @endif
                                         <li class="courses__wishlist">
                                             <a  href="javascript:;" class="wsus-wishlist-btn" aria-label="WishList" data-slug="{{ $course?->slug }}">
                                                 <i class="{{ $course?->favorite_by_client ? 'fas' : 'far' }} fa-heart"></i>

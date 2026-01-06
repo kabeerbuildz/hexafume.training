@@ -16,11 +16,14 @@
                             $allCoursesIds = json_decode(
                                 $featuredCourse?->all_category_ids ? $featuredCourse->all_category_ids : '[]',
                             );
-                            $allCourses = App\Models\Course::with(
+                            $allCourses = App\Models\Course::with([
                                 'favoriteBy',
                                 'category.translation',
                                 'instructor:id,name',
-                            )
+                                'courseFeeStructures' => function($q) {
+                                    $q->where('status', 1);
+                                }
+                            ])
                                 ->whereIn('id', $allCoursesIds)
                                 ->withCount([
                                     'reviews as avg_rating' => function ($query) {
@@ -49,11 +52,14 @@
                                         ->where('id', $featuredCourse->category_one)
                                         ->first();
                                     $categoryOneIds = json_decode($featuredCourse->category_one_ids);
-                                    $categoryOneCourses = App\Models\Course::with(
+                                    $categoryOneCourses = App\Models\Course::with([
                                         'favoriteBy',
                                         'category.translation',
                                         'instructor:id,name',
-                                    )
+                                        'courseFeeStructures' => function($q) {
+                                            $q->where('status', 1);
+                                        }
+                                    ])
                                         ->whereIn('id', $categoryOneIds)
                                         ->withCount([
                                             'reviews as avg_rating' => function ($query) {
@@ -77,11 +83,14 @@
                                         ->where('id', $featuredCourse->category_two)
                                         ->first();
                                     $categoryTwoIds = json_decode($featuredCourse->category_two_ids);
-                                    $categoryTwoCourses = App\Models\Course::with(
+                                    $categoryTwoCourses = App\Models\Course::with([
                                         'favoriteBy',
                                         'category.translation',
                                         'instructor:id,name',
-                                    )
+                                        'courseFeeStructures' => function($q) {
+                                            $q->where('status', 1);
+                                        }
+                                    ])
                                         ->whereIn('id', $categoryTwoIds)
                                         ->withCount([
                                             'reviews as avg_rating' => function ($query) {
@@ -106,11 +115,14 @@
                                         ->where('id', $featuredCourse->category_three)
                                         ->first();
                                     $categoryThreeIds = json_decode($featuredCourse->category_three_ids);
-                                    $categoryThreeCourses = App\Models\Course::with(
+                                    $categoryThreeCourses = App\Models\Course::with([
                                         'favoriteBy',
                                         'category.translation',
                                         'instructor:id,name',
-                                    )
+                                        'courseFeeStructures' => function($q) {
+                                            $q->where('status', 1);
+                                        }
+                                    ])
                                         ->whereIn('id', $categoryThreeIds)
                                         ->withCount([
                                             'reviews as avg_rating' => function ($query) {
@@ -135,11 +147,14 @@
                                         ->where('id', $featuredCourse->category_four)
                                         ->first();
                                     $categoryFourIds = json_decode($featuredCourse->category_four_ids);
-                                    $categoryFourCourses = App\Models\Course::with(
+                                    $categoryFourCourses = App\Models\Course::with([
                                         'favoriteBy',
                                         'category.translation',
                                         'instructor:id,name',
-                                    )
+                                        'courseFeeStructures' => function($q) {
+                                            $q->where('status', 1);
+                                        }
+                                    ])
                                         ->whereIn('id', $categoryFourIds)
                                         ->withCount([
                                             'reviews as avg_rating' => function ($query) {
@@ -164,11 +179,14 @@
                                         ->where('id', $featuredCourse->category_five)
                                         ->first();
                                     $categoryFiveIds = json_decode($featuredCourse->category_five_ids);
-                                    $categoryFiveCourses = App\Models\Course::with(
+                                    $categoryFiveCourses = App\Models\Course::with([
                                         'favoriteBy',
                                         'category.translation',
                                         'instructor:id,name',
-                                    )
+                                        'courseFeeStructures' => function($q) {
+                                            $q->where('status', 1);
+                                        }
+                                    ])
                                         ->whereIn('id', $categoryFiveIds)
                                         ->withCount([
                                             'reviews as avg_rating' => function ($query) {
@@ -225,12 +243,21 @@
                                         <h2 class="title"><a
                                                 href="{{ route('course.show', $course->slug) }}">{{ $course?->instructor?->name }}</a>
                                         </h2>
-                                        @if ($course->price == 0)
-                                            <h3 class="price">{{ __('Free') }}</h3>
-                                        @elseif ($course->price > 0 && $course->discount > 0)
-                                            <h3 class="price">{{ currency($course->discount) }}</h3>
+                                        @php
+                                            $feeStructures = $course->courseFeeStructures ?? collect([]);
+                                            $minFee = $feeStructures->min('course_fee');
+                                            $maxFee = $feeStructures->max('course_fee');
+                                        @endphp
+                                        @if($feeStructures->count() > 0 && $minFee !== null)
+                                            @if($minFee == 0)
+                                                <h3 class="price">{{ __('Free') }}</h3>
+                                            @elseif($minFee == $maxFee)
+                                                <h3 class="price">{{ currency($minFee) }}</h3>
+                                            @else
+                                                <h3 class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</h3>
+                                            @endif
                                         @else
-                                            <h3 class="price">{{ currency($course->price) }}</h3>
+                                            <h3 class="price">{{ __('Contact for Price') }}</h3>
                                         @endif
                                     </div>
                                     <span>{{ __('Professional Tutor') }}</span>
@@ -292,12 +319,21 @@
                                         <h2 class="title"><a
                                                 href="{{ route('course.show', $course->slug) }}">{{ $course?->instructor?->name }}</a>
                                         </h2>
-                                        @if ($course->price == 0)
-                                            <h3 class="price">{{ __('Free') }}</h3>
-                                        @elseif ($course->price > 0 && $course->discount > 0)
-                                            <h3 class="price">{{ currency($course->discount) }}</h3>
+                                        @php
+                                            $feeStructures = $course->courseFeeStructures ?? collect([]);
+                                            $minFee = $feeStructures->min('course_fee');
+                                            $maxFee = $feeStructures->max('course_fee');
+                                        @endphp
+                                        @if($feeStructures->count() > 0 && $minFee !== null)
+                                            @if($minFee == 0)
+                                                <h3 class="price">{{ __('Free') }}</h3>
+                                            @elseif($minFee == $maxFee)
+                                                <h3 class="price">{{ currency($minFee) }}</h3>
+                                            @else
+                                                <h3 class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</h3>
+                                            @endif
                                         @else
-                                            <h3 class="price">{{ currency($course->price) }}</h3>
+                                            <h3 class="price">{{ __('Contact for Price') }}</h3>
                                         @endif
                                     </div>
                                     <span>{{ __('Professional Tutor') }}</span>
@@ -359,12 +395,21 @@
                                         <h2 class="title"><a
                                                 href="{{ route('course.show', $course->slug) }}">{{ $course?->instructor?->name }}</a>
                                         </h2>
-                                        @if ($course->price == 0)
-                                            <h3 class="price">{{ __('Free') }}</h3>
-                                        @elseif ($course->price > 0 && $course->discount > 0)
-                                            <h3 class="price">{{ currency($course->discount) }}</h3>
+                                        @php
+                                            $feeStructures = $course->courseFeeStructures ?? collect([]);
+                                            $minFee = $feeStructures->min('course_fee');
+                                            $maxFee = $feeStructures->max('course_fee');
+                                        @endphp
+                                        @if($feeStructures->count() > 0 && $minFee !== null)
+                                            @if($minFee == 0)
+                                                <h3 class="price">{{ __('Free') }}</h3>
+                                            @elseif($minFee == $maxFee)
+                                                <h3 class="price">{{ currency($minFee) }}</h3>
+                                            @else
+                                                <h3 class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</h3>
+                                            @endif
                                         @else
-                                            <h3 class="price">{{ currency($course->price) }}</h3>
+                                            <h3 class="price">{{ __('Contact for Price') }}</h3>
                                         @endif
                                     </div>
                                     <span>{{ __('Professional Tutor') }}</span>
@@ -426,12 +471,21 @@
                                         <h2 class="title"><a
                                                 href="{{ route('course.show', $course->slug) }}">{{ $course?->instructor?->name }}</a>
                                         </h2>
-                                        @if ($course->price == 0)
-                                            <h3 class="price">{{ __('Free') }}</h3>
-                                        @elseif ($course->price > 0 && $course->discount > 0)
-                                            <h3 class="price">{{ currency($course->discount) }}</h3>
+                                        @php
+                                            $feeStructures = $course->courseFeeStructures ?? collect([]);
+                                            $minFee = $feeStructures->min('course_fee');
+                                            $maxFee = $feeStructures->max('course_fee');
+                                        @endphp
+                                        @if($feeStructures->count() > 0 && $minFee !== null)
+                                            @if($minFee == 0)
+                                                <h3 class="price">{{ __('Free') }}</h3>
+                                            @elseif($minFee == $maxFee)
+                                                <h3 class="price">{{ currency($minFee) }}</h3>
+                                            @else
+                                                <h3 class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</h3>
+                                            @endif
                                         @else
-                                            <h3 class="price">{{ currency($course->price) }}</h3>
+                                            <h3 class="price">{{ __('Contact for Price') }}</h3>
                                         @endif
                                     </div>
                                     <span>{{ __('Professional Tutor') }}</span>
@@ -493,12 +547,21 @@
                                         <h2 class="title"><a
                                                 href="{{ route('course.show', $course->slug) }}">{{ $course?->instructor?->name }}</a>
                                         </h2>
-                                        @if ($course->price == 0)
-                                            <h3 class="price">{{ __('Free') }}</h3>
-                                        @elseif ($course->price > 0 && $course->discount > 0)
-                                            <h3 class="price">{{ currency($course->discount) }}</h3>
+                                        @php
+                                            $feeStructures = $course->courseFeeStructures ?? collect([]);
+                                            $minFee = $feeStructures->min('course_fee');
+                                            $maxFee = $feeStructures->max('course_fee');
+                                        @endphp
+                                        @if($feeStructures->count() > 0 && $minFee !== null)
+                                            @if($minFee == 0)
+                                                <h3 class="price">{{ __('Free') }}</h3>
+                                            @elseif($minFee == $maxFee)
+                                                <h3 class="price">{{ currency($minFee) }}</h3>
+                                            @else
+                                                <h3 class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</h3>
+                                            @endif
                                         @else
-                                            <h3 class="price">{{ currency($course->price) }}</h3>
+                                            <h3 class="price">{{ __('Contact for Price') }}</h3>
                                         @endif
                                     </div>
                                     <span>{{ __('Professional Tutor') }}</span>
@@ -560,12 +623,21 @@
                                         <h2 class="title"><a
                                                 href="{{ route('course.show', $course->slug) }}">{{ $course?->instructor?->name }}</a>
                                         </h2>
-                                        @if ($course->price == 0)
-                                            <h3 class="price">{{ __('Free') }}</h3>
-                                        @elseif ($course->price > 0 && $course->discount > 0)
-                                            <h3 class="price">{{ currency($course->discount) }}</h3>
+                                        @php
+                                            $feeStructures = $course->courseFeeStructures ?? collect([]);
+                                            $minFee = $feeStructures->min('course_fee');
+                                            $maxFee = $feeStructures->max('course_fee');
+                                        @endphp
+                                        @if($feeStructures->count() > 0 && $minFee !== null)
+                                            @if($minFee == 0)
+                                                <h3 class="price">{{ __('Free') }}</h3>
+                                            @elseif($minFee == $maxFee)
+                                                <h3 class="price">{{ currency($minFee) }}</h3>
+                                            @else
+                                                <h3 class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</h3>
+                                            @endif
                                         @else
-                                            <h3 class="price">{{ currency($course->price) }}</h3>
+                                            <h3 class="price">{{ __('Contact for Price') }}</h3>
                                         @endif
                                     </div>
                                     <span>{{ __('Professional Tutor') }}</span>
