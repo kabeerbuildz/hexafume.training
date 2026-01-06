@@ -57,8 +57,7 @@
         },
         "files": [
             "app/Helpers/helper.php",
-            "Modules/Menubuilder/app/Helpers/helper.php",
-            "Modules/Installer/app/Helpers/helper.php"
+            "Modules/Menubuilder/app/Helpers/helper.php"
         ]
     },
     "autoload-dev": {

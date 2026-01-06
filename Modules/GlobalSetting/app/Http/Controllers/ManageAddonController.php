@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Artisan;
 use Spatie\Permission\Models\Permission;
 use Modules\GlobalSetting\app\Models\Setting;
-use Modules\Installer\app\Enums\InstallerInfo;
 use Modules\GlobalSetting\app\Traits\ArchiveHelperTrait;
 use Pion\Laravel\ChunkUpload\Receiver\FileReceiver;
 use Pion\Laravel\ChunkUpload\Handler\HandlerFactory;
@@ -141,29 +140,9 @@ class ManageAddonController extends Controller
             // check if addon is for the current application
             if (isset($addonFileJson['item'])) {
                 $item = $addonFileJson['item'];
-                if (!(isset($item['alias']) && $item['alias'] == 'skillgro' && isset($item['product_id']) && $item['product_id'] == InstallerInfo::ITEM_ID->value)) {
+                if (!(isset($item['alias']) && $item['alias'] == 'skillgro')) {
                     return redirect()->back()->with([
                         'message' => __('Addon is not for suitable for this application'),
-                        'alert-type' => 'error',
-                    ]);
-                }
-
-                $itemId = $item['item_id'];
-                if (!$itemId) {
-                    return redirect()->back()->with([
-                        'message' => __('Addon is not for suitable for this application'),
-                        'alert-type' => 'error',
-                    ]);
-                }
-                $getContent = file_get_contents(InstallerInfo::getLicenseFilePath());
-                $json = json_decode(
-                    $getContent,
-                    true
-                );
-
-                if (!isset($json["addon_$itemId"])) {
-                    return redirect()->back()->with([
-                        'message' => __('Addon is not verified'),
                         'alert-type' => 'error',
                     ]);
                 }
@@ -551,71 +530,11 @@ class ManageAddonController extends Controller
     }
     public function removeVerifyKey($slug)
     {
-        // Correct the JSON path for the addon
-        $jsonPath = base_path("Modules/{$slug}/wsus.json");
-        // Check if the module and JSON file exist
-        if (Module::find($slug) && file_exists($jsonPath)) {
-            // Decode the JSON file
-            $wsusJson = json_decode(file_get_contents($jsonPath));
-            $itemID = $wsusJson->item->item_id;
-            // remove hashed
-            $getContent = file_get_contents(InstallerInfo::getLicenseFilePath());
-            $json = json_decode(
-                $getContent,
-                true
-            );
-            unset($json["addon_$itemID"]);
-            $json = json_encode($json);
-            file_put_contents(InstallerInfo::getLicenseFilePath(), $json);
-        }
+        // Verification removed - no longer needed
     }
     public function verifyAddon(Request $request)
     {
-        $request->validate([
-            'key' => 'required',
-        ]);
-        $zipFilePath = public_path('addons_files/addon.zip');
-        if (!File::exists($zipFilePath)) {
-            return response()->json(['message' => __('Addon Not Found'), 'alert-type' => 'error']);
-        }
-        if (!$this->isFirstDirAddons($zipFilePath)) {
-            return response()->json(['message' => __('Invalid Addon File Structure'), 'alert-type' => 'error']);
-        }
-        $file = $zipFilePath;
-        if (pathinfo($file, PATHINFO_EXTENSION) === 'zip' && $this->isFirstDirAddons($file)) {
-            $addonFile     = $this->checkAndReadJsonFile($file);
-            $addonFileJson = json_decode(json_encode($addonFile), true);
-            $itemID = $addonFileJson['item']['item_id'];
-            if (empty($itemID)) {
-                return response()->json(['message' => __('Invalid Addon File Structure'), 'alert-type' => 'error']);
-            } else {
-                if ($itemID == InstallerInfo::ITEM_ID->value) {
-                    return response()->json(['message' => __('Invalid Addon File Structure'), 'alert-type' => 'error']);
-                }
-            }
-            try {
-                $response = Http::post(InstallerInfo::VERIFICATION_URL->value, [
-                    'purchase_code' => $request->key,
-                    'item_id' => $itemID,
-                    'incoming_url' => InstallerInfo::getHost(),
-                    'incoming_ip' => InstallerInfo::getRemoteAddr(),
-                ])->json();
-                if ($response['success']) {
-                    $getContent = file_get_contents(InstallerInfo::getLicenseFilePath());
-                    if ($getContent) {
-                        $json = json_decode($getContent, true);
-                        $json['addon_' . $itemID] = $response['verification_hashed'];
-                        file_put_contents(InstallerInfo::getLicenseFilePath(), json_encode($json, JSON_PRETTY_PRINT));
-                    } else {
-                        file_put_contents(InstallerInfo::getLicenseFilePath(), json_encode(["addon_$itemID" => $response['verification_hashed']], JSON_PRETTY_PRINT));
-                    }
-                    return response()->json(['message' => __('Verified Successfully'), 'success' => 'true']);
-                } else {
-                    return response()->json(['message' => __('Invalid Key'), 'alert-type' => 'error']);
-                }
-            } catch (Exception $e) {
-                return response()->json(['message' => __('Something went wrong'), 'alert-type' => 'error']);
-            }
-        }
+        // Verification removed - addons no longer require verification
+        return response()->json(['message' => __('Verification not required'), 'success' => 'true']);
     }
 }

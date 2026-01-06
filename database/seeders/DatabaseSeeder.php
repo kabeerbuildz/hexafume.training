@@ -11,7 +11,6 @@ use Modules\GlobalSetting\database\seeders\SeoInfoSeeder;
 use Modules\Menubuilder\database\seeders\MenubuilderSeeder;
 use Modules\Frontend\database\seeders\HomePagesSectionSeeder;
 use Modules\GlobalSetting\database\seeders\EmailTemplateSeeder;
-use Modules\Installer\database\seeders\InstallerDatabaseSeeder;
 use Modules\GlobalSetting\database\seeders\CustomPaginationSeeder;
 use Modules\GlobalSetting\database\seeders\MarketingSettingSeeder;
 use Modules\GlobalSetting\database\seeders\GlobalSettingInfoSeeder;
@@ -30,7 +29,6 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            InstallerDatabaseSeeder::class,
             LanguageSeeder::class,
             CurrencySeeder::class,
             GlobalSettingInfoSeeder::class,
