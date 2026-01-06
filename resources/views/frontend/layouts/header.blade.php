@@ -213,19 +213,29 @@ $categories = \Illuminate\Support\Facades\Cache::remember('header_categories', 3
                             </div>
                             <div class="tgmenu__action">
                                 <ul class="list-wrap">
-                                    <li class="mini-cart-icon">
-                                        <a href="{{ route('cart') }}" class="cart-count">
-                                            <img src="{{ asset('frontend/img/icons/cart.svg') }}" class="injectable"
-                                                alt="img">
-                                            <span class="mini-cart-count">
-                                                @auth('web')
-                                                {{userAuth()->cart_count}}
-                                                @else
-                                                {{ Cart::content()->count() }}
-                                                @endauth
-                                            </span>
-                                        </a>
-                                    </li>
+                                    @auth('web')
+                                        @if(userAuth()->role !== 'instructor')
+                                            <li class="mini-cart-icon">
+                                                <a href="{{ route('cart') }}" class="cart-count">
+                                                    <img src="{{ asset('frontend/img/icons/cart.svg') }}" class="injectable"
+                                                        alt="img">
+                                                    <span class="mini-cart-count">
+                                                        {{userAuth()->cart_count}}
+                                                    </span>
+                                                </a>
+                                            </li>
+                                        @endif
+                                    @else
+                                        <li class="mini-cart-icon">
+                                            <a href="{{ route('cart') }}" class="cart-count">
+                                                <img src="{{ asset('frontend/img/icons/cart.svg') }}" class="injectable"
+                                                    alt="img">
+                                                <span class="mini-cart-count">
+                                                    {{ Cart::content()->count() }}
+                                                </span>
+                                            </a>
+                                        </li>
+                                    @endauth
                                     <li class="mini-cart-icon user-dropdown-wrapper">
                                         <a href="javascript:;" class="cart-count user-dropdown-trigger">
                                             <img src="{{ asset('frontend/img/icons/menu_user.svg') }}" alt="img">

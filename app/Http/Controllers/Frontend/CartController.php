@@ -16,6 +16,13 @@ class CartController extends Controller {
     public function index() {
         if (auth()->check()) {
             $user = userAuth();
+            // Block instructors from accessing cart
+            if ($user->role === 'instructor') {
+                return redirect()->route('instructor.dashboard')->with([
+                    'messege' => __('Instructors cannot access the cart.'),
+                    'alert-type' => 'error'
+                ]);
+            }
             $cart_count = $user->cart_count;
             if ($cart_count == 0) {
                 $this->destroyCouponSession();
@@ -46,6 +53,10 @@ class CartController extends Controller {
 
         if (auth()->check()) {
             $user = userAuth();
+            // Block instructors from adding to cart
+            if ($user->role === 'instructor') {
+                return response()->json(['status' => 'error', 'message' => __('Instructors cannot add courses to cart.')], 403);
+            }
             if (isOwnCourse($user, $course)) {
                 return response()->json(['status' => 'error', 'message' => 'You can not add to cart your own course!'], 200);
             }
@@ -111,6 +122,13 @@ class CartController extends Controller {
     public function removeCartItem(string $rowId) {
         if (auth()->check()) {
             $user = userAuth();
+            // Block instructors from removing cart items
+            if ($user->role === 'instructor') {
+                return redirect()->route('instructor.dashboard')->with([
+                    'messege' => __('Instructors cannot access the cart.'),
+                    'alert-type' => 'error'
+                ]);
+            }
             $course = Course::select('id')->whereSlug($rowId)->first();
             if (!$course || !$user->carts()->where('course_id', $course->id)->exists()) {
                 $notification = [

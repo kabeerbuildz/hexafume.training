@@ -25,29 +25,54 @@
                         href="{{ route('instructor-details', ['id' => $course->instructor->id, 'slug' => Str::slug($course->instructor->name)]) }}">{{ $course->instructor->name }}</a>
                 </p>
                 <div class="courses__item-bottom">
-                    @if (in_array($course->id, session('enrollments') ?? []))
-                        <div class="button">
-                            <a href="{{ route('student.enrolled-courses') }}" class="already-enrolled-btn"
-                                data-id="">
-                                <span class="text">{{ __('Enrolled') }}</span>
-                                <i class="flaticon-arrow-right"></i>
-                            </a>
-                        </div>
-                    @elseif ($course->enrollments->count() >= $course->capacity && $course->capacity != null)
-                        <div class="button">
-                            <a href="javascript:;" class="" data-id="{{ $course->id }}">
-                                <span class="text">{{ __('Booked') }}</span>
-                                <i class="flaticon-arrow-right"></i>
-                            </a>
-                        </div>
+                    @auth('web')
+                        @if(userAuth()->role === 'instructor')
+                            <div class="button">
+                                <a href="{{ route('instructor.dashboard') }}" class="">
+                                    <span class="text">{{ __('Go to Dashboard') }}</span>
+                                    <i class="flaticon-arrow-right"></i>
+                                </a>
+                            </div>
+                        @elseif (in_array($course->id, session('enrollments') ?? []))
+                            <div class="button">
+                                <a href="{{ route('student.enrolled-courses') }}" class="already-enrolled-btn"
+                                    data-id="">
+                                    <span class="text">{{ __('Enrolled') }}</span>
+                                    <i class="flaticon-arrow-right"></i>
+                                </a>
+                            </div>
+                        @elseif ($course->enrollments->count() >= $course->capacity && $course->capacity != null)
+                            <div class="button">
+                                <a href="javascript:;" class="" data-id="{{ $course->id }}">
+                                    <span class="text">{{ __('Booked') }}</span>
+                                    <i class="flaticon-arrow-right"></i>
+                                </a>
+                            </div>
+                        @else
+                            <div class="button">
+                                <a href="javascript:;" class="add-to-cart" data-id="{{ $course->id }}">
+                                    <span class="text">{{ __('Add To Cart') }}</span>
+                                    <i class="flaticon-arrow-right"></i>
+                                </a>
+                            </div>
+                        @endif
                     @else
-                        <div class="button">
-                            <a href="javascript:;" class="add-to-cart" data-id="{{ $course->id }}">
-                                <span class="text">{{ __('Add To Cart') }}</span>
-                                <i class="flaticon-arrow-right"></i>
-                            </a>
-                        </div>
-                    @endif
+                        @if ($course->enrollments->count() >= $course->capacity && $course->capacity != null)
+                            <div class="button">
+                                <a href="javascript:;" class="" data-id="{{ $course->id }}">
+                                    <span class="text">{{ __('Booked') }}</span>
+                                    <i class="flaticon-arrow-right"></i>
+                                </a>
+                            </div>
+                        @else
+                            <div class="button">
+                                <a href="javascript:;" class="add-to-cart" data-id="{{ $course->id }}">
+                                    <span class="text">{{ __('Add To Cart') }}</span>
+                                    <i class="flaticon-arrow-right"></i>
+                                </a>
+                            </div>
+                        @endif
+                    @endauth
                     @php
                         $feeStructures = $course->courseFeeStructures ?? collect([]);
                         $minFee = $feeStructures->min('course_fee');
