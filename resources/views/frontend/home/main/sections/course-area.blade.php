@@ -145,8 +145,8 @@
                                             @auth('web')
                                                 @if(userAuth()->role === 'instructor')
                                                     <div class="button">
-                                                        <a href="{{ route('instructor.dashboard') }}" class="">
-                                                            <span class="text">{{ __('Go to Dashboard') }}</span>
+                                                        <a href="{{ route('course.show', $course->slug) }}" class="">
+                                                            <span class="text">{{ __('View Course Details') }}</span>
                                                             <i class="flaticon-arrow-right"></i>
                                                         </a>
                                                     </div>
@@ -195,22 +195,43 @@
                                                 @endif
                                             @endauth
 
-                                            @php
-                                                $feeStructures = $course->courseFeeStructures ?? collect([]);
-                                                $minFee = $feeStructures->min('course_fee');
-                                                $maxFee = $feeStructures->max('course_fee');
-                                            @endphp
-                                            @if($feeStructures->count() > 0 && $minFee !== null)
-                                                @if($minFee == 0)
-                                                    <h4 class="price">{{ __('Free') }}</h4>
-                                                @elseif($minFee == $maxFee)
-                                                    <h4 class="price">{{ currency($minFee) }}</h4>
-                                                @else
-                                                    <h4 class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</h4>
+                                            @auth('web')
+                                                @if(userAuth()->role !== 'instructor')
+                                                    @php
+                                                        $feeStructures = $course->courseFeeStructures ?? collect([]);
+                                                        $minFee = $feeStructures->min('course_fee');
+                                                        $maxFee = $feeStructures->max('course_fee');
+                                                    @endphp
+                                                    @if($feeStructures->count() > 0 && $minFee !== null)
+                                                        @if($minFee == 0)
+                                                            <h4 class="price">{{ __('Free') }}</h4>
+                                                        @elseif($minFee == $maxFee)
+                                                            <h4 class="price">{{ currency($minFee) }}</h4>
+                                                        @else
+                                                            <h4 class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</h4>
+                                                        @endif
+                                                    @else
+                                                        <h4 class="price">{{ __('Contact for Price') }}</h4>
+                                                    @endif
                                                 @endif
                                             @else
-                                                <h4 class="price">{{ __('Contact for Price') }}</h4>
-                                            @endif
+                                                @php
+                                                    $feeStructures = $course->courseFeeStructures ?? collect([]);
+                                                    $minFee = $feeStructures->min('course_fee');
+                                                    $maxFee = $feeStructures->max('course_fee');
+                                                @endphp
+                                                @if($feeStructures->count() > 0 && $minFee !== null)
+                                                    @if($minFee == 0)
+                                                        <h4 class="price">{{ __('Free') }}</h4>
+                                                    @elseif($minFee == $maxFee)
+                                                        <h4 class="price">{{ currency($minFee) }}</h4>
+                                                    @else
+                                                        <h4 class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</h4>
+                                                    @endif
+                                                @else
+                                                    <h4 class="price">{{ __('Contact for Price') }}</h4>
+                                                @endif
+                                            @endauth
                                         </div>
                                     </div>
                                 </div>
@@ -270,8 +291,8 @@
                                             @auth('web')
                                                 @if(userAuth()->role === 'instructor')
                                                     <div class="button">
-                                                        <a href="{{ route('instructor.dashboard') }}" class="">
-                                                            <span class="text">{{ __('Go to Dashboard') }}</span>
+                                                        <a href="{{ route('course.show', $course->slug) }}" class="">
+                                                            <span class="text">{{ __('View Course Details') }}</span>
                                                             <i class="flaticon-arrow-right"></i>
                                                         </a>
                                                     </div>
@@ -319,22 +340,43 @@
                                                     </div>
                                                 @endif
                                             @endauth
-                                            @php
-                                                $feeStructures = $course->courseFeeStructures ?? collect([]);
-                                                $minFee = $feeStructures->min('course_fee');
-                                                $maxFee = $feeStructures->max('course_fee');
-                                            @endphp
-                                            @if($feeStructures->count() > 0 && $minFee !== null)
-                                                @if($minFee == 0)
-                                                    <h4 class="price">{{ __('Free') }}</h4>
-                                                @elseif($minFee == $maxFee)
-                                                    <h4 class="price">{{ currency($minFee) }}</h4>
-                                                @else
-                                                    <h4 class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</h4>
+                                            @auth('web')
+                                                @if(userAuth()->role !== 'instructor')
+                                                    @php
+                                                        $feeStructures = $course->courseFeeStructures ?? collect([]);
+                                                        $minFee = $feeStructures->min('course_fee');
+                                                        $maxFee = $feeStructures->max('course_fee');
+                                                    @endphp
+                                                    @if($feeStructures->count() > 0 && $minFee !== null)
+                                                        @if($minFee == 0)
+                                                            <h4 class="price">{{ __('Free') }}</h4>
+                                                        @elseif($minFee == $maxFee)
+                                                            <h4 class="price">{{ currency($minFee) }}</h4>
+                                                        @else
+                                                            <h4 class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</h4>
+                                                        @endif
+                                                    @else
+                                                        <h4 class="price">{{ __('Contact for Price') }}</h4>
+                                                    @endif
                                                 @endif
                                             @else
-                                                <h4 class="price">{{ __('Contact for Price') }}</h4>
-                                            @endif
+                                                @php
+                                                    $feeStructures = $course->courseFeeStructures ?? collect([]);
+                                                    $minFee = $feeStructures->min('course_fee');
+                                                    $maxFee = $feeStructures->max('course_fee');
+                                                @endphp
+                                                @if($feeStructures->count() > 0 && $minFee !== null)
+                                                    @if($minFee == 0)
+                                                        <h4 class="price">{{ __('Free') }}</h4>
+                                                    @elseif($minFee == $maxFee)
+                                                        <h4 class="price">{{ currency($minFee) }}</h4>
+                                                    @else
+                                                        <h4 class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</h4>
+                                                    @endif
+                                                @else
+                                                    <h4 class="price">{{ __('Contact for Price') }}</h4>
+                                                @endif
+                                            @endauth
                                         </div>
                                     </div>
                                 </div>
@@ -391,8 +433,8 @@
                                             @auth('web')
                                                 @if(userAuth()->role === 'instructor')
                                                     <div class="button">
-                                                        <a href="{{ route('instructor.dashboard') }}" class="">
-                                                            <span class="text">{{ __('Go to Dashboard') }}</span>
+                                                        <a href="{{ route('course.show', $course->slug) }}" class="">
+                                                            <span class="text">{{ __('View Course Details') }}</span>
                                                             <i class="flaticon-arrow-right"></i>
                                                         </a>
                                                     </div>
@@ -440,22 +482,43 @@
                                                     </div>
                                                 @endif
                                             @endauth
-                                            @php
-                                                $feeStructures = $course->courseFeeStructures ?? collect([]);
-                                                $minFee = $feeStructures->min('course_fee');
-                                                $maxFee = $feeStructures->max('course_fee');
-                                            @endphp
-                                            @if($feeStructures->count() > 0 && $minFee !== null)
-                                                @if($minFee == 0)
-                                                    <h4 class="price">{{ __('Free') }}</h4>
-                                                @elseif($minFee == $maxFee)
-                                                    <h4 class="price">{{ currency($minFee) }}</h4>
-                                                @else
-                                                    <h4 class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</h4>
+                                            @auth('web')
+                                                @if(userAuth()->role !== 'instructor')
+                                                    @php
+                                                        $feeStructures = $course->courseFeeStructures ?? collect([]);
+                                                        $minFee = $feeStructures->min('course_fee');
+                                                        $maxFee = $feeStructures->max('course_fee');
+                                                    @endphp
+                                                    @if($feeStructures->count() > 0 && $minFee !== null)
+                                                        @if($minFee == 0)
+                                                            <h4 class="price">{{ __('Free') }}</h4>
+                                                        @elseif($minFee == $maxFee)
+                                                            <h4 class="price">{{ currency($minFee) }}</h4>
+                                                        @else
+                                                            <h4 class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</h4>
+                                                        @endif
+                                                    @else
+                                                        <h4 class="price">{{ __('Contact for Price') }}</h4>
+                                                    @endif
                                                 @endif
                                             @else
-                                                <h4 class="price">{{ __('Contact for Price') }}</h4>
-                                            @endif
+                                                @php
+                                                    $feeStructures = $course->courseFeeStructures ?? collect([]);
+                                                    $minFee = $feeStructures->min('course_fee');
+                                                    $maxFee = $feeStructures->max('course_fee');
+                                                @endphp
+                                                @if($feeStructures->count() > 0 && $minFee !== null)
+                                                    @if($minFee == 0)
+                                                        <h4 class="price">{{ __('Free') }}</h4>
+                                                    @elseif($minFee == $maxFee)
+                                                        <h4 class="price">{{ currency($minFee) }}</h4>
+                                                    @else
+                                                        <h4 class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</h4>
+                                                    @endif
+                                                @else
+                                                    <h4 class="price">{{ __('Contact for Price') }}</h4>
+                                                @endif
+                                            @endauth
                                         </div>
                                     </div>
                                 </div>
@@ -511,8 +574,8 @@
                                             @auth('web')
                                                 @if(userAuth()->role === 'instructor')
                                                     <div class="button">
-                                                        <a href="{{ route('instructor.dashboard') }}" class="">
-                                                            <span class="text">{{ __('Go to Dashboard') }}</span>
+                                                        <a href="{{ route('course.show', $course->slug) }}" class="">
+                                                            <span class="text">{{ __('View Course Details') }}</span>
                                                             <i class="flaticon-arrow-right"></i>
                                                         </a>
                                                     </div>
@@ -560,22 +623,43 @@
                                                     </div>
                                                 @endif
                                             @endauth
-                                            @php
-                                                $feeStructures = $course->courseFeeStructures ?? collect([]);
-                                                $minFee = $feeStructures->min('course_fee');
-                                                $maxFee = $feeStructures->max('course_fee');
-                                            @endphp
-                                            @if($feeStructures->count() > 0 && $minFee !== null)
-                                                @if($minFee == 0)
-                                                    <h4 class="price">{{ __('Free') }}</h4>
-                                                @elseif($minFee == $maxFee)
-                                                    <h4 class="price">{{ currency($minFee) }}</h4>
-                                                @else
-                                                    <h4 class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</h4>
+                                            @auth('web')
+                                                @if(userAuth()->role !== 'instructor')
+                                                    @php
+                                                        $feeStructures = $course->courseFeeStructures ?? collect([]);
+                                                        $minFee = $feeStructures->min('course_fee');
+                                                        $maxFee = $feeStructures->max('course_fee');
+                                                    @endphp
+                                                    @if($feeStructures->count() > 0 && $minFee !== null)
+                                                        @if($minFee == 0)
+                                                            <h4 class="price">{{ __('Free') }}</h4>
+                                                        @elseif($minFee == $maxFee)
+                                                            <h4 class="price">{{ currency($minFee) }}</h4>
+                                                        @else
+                                                            <h4 class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</h4>
+                                                        @endif
+                                                    @else
+                                                        <h4 class="price">{{ __('Contact for Price') }}</h4>
+                                                    @endif
                                                 @endif
                                             @else
-                                                <h4 class="price">{{ __('Contact for Price') }}</h4>
-                                            @endif
+                                                @php
+                                                    $feeStructures = $course->courseFeeStructures ?? collect([]);
+                                                    $minFee = $feeStructures->min('course_fee');
+                                                    $maxFee = $feeStructures->max('course_fee');
+                                                @endphp
+                                                @if($feeStructures->count() > 0 && $minFee !== null)
+                                                    @if($minFee == 0)
+                                                        <h4 class="price">{{ __('Free') }}</h4>
+                                                    @elseif($minFee == $maxFee)
+                                                        <h4 class="price">{{ currency($minFee) }}</h4>
+                                                    @else
+                                                        <h4 class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</h4>
+                                                    @endif
+                                                @else
+                                                    <h4 class="price">{{ __('Contact for Price') }}</h4>
+                                                @endif
+                                            @endauth
                                         </div>
                                     </div>
                                 </div>
@@ -631,8 +715,8 @@
                                             @auth('web')
                                                 @if(userAuth()->role === 'instructor')
                                                     <div class="button">
-                                                        <a href="{{ route('instructor.dashboard') }}" class="">
-                                                            <span class="text">{{ __('Go to Dashboard') }}</span>
+                                                        <a href="{{ route('course.show', $course->slug) }}" class="">
+                                                            <span class="text">{{ __('View Course Details') }}</span>
                                                             <i class="flaticon-arrow-right"></i>
                                                         </a>
                                                     </div>
@@ -680,22 +764,43 @@
                                                     </div>
                                                 @endif
                                             @endauth
-                                            @php
-                                                $feeStructures = $course->courseFeeStructures ?? collect([]);
-                                                $minFee = $feeStructures->min('course_fee');
-                                                $maxFee = $feeStructures->max('course_fee');
-                                            @endphp
-                                            @if($feeStructures->count() > 0 && $minFee !== null)
-                                                @if($minFee == 0)
-                                                    <h4 class="price">{{ __('Free') }}</h4>
-                                                @elseif($minFee == $maxFee)
-                                                    <h4 class="price">{{ currency($minFee) }}</h4>
-                                                @else
-                                                    <h4 class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</h4>
+                                            @auth('web')
+                                                @if(userAuth()->role !== 'instructor')
+                                                    @php
+                                                        $feeStructures = $course->courseFeeStructures ?? collect([]);
+                                                        $minFee = $feeStructures->min('course_fee');
+                                                        $maxFee = $feeStructures->max('course_fee');
+                                                    @endphp
+                                                    @if($feeStructures->count() > 0 && $minFee !== null)
+                                                        @if($minFee == 0)
+                                                            <h4 class="price">{{ __('Free') }}</h4>
+                                                        @elseif($minFee == $maxFee)
+                                                            <h4 class="price">{{ currency($minFee) }}</h4>
+                                                        @else
+                                                            <h4 class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</h4>
+                                                        @endif
+                                                    @else
+                                                        <h4 class="price">{{ __('Contact for Price') }}</h4>
+                                                    @endif
                                                 @endif
                                             @else
-                                                <h4 class="price">{{ __('Contact for Price') }}</h4>
-                                            @endif
+                                                @php
+                                                    $feeStructures = $course->courseFeeStructures ?? collect([]);
+                                                    $minFee = $feeStructures->min('course_fee');
+                                                    $maxFee = $feeStructures->max('course_fee');
+                                                @endphp
+                                                @if($feeStructures->count() > 0 && $minFee !== null)
+                                                    @if($minFee == 0)
+                                                        <h4 class="price">{{ __('Free') }}</h4>
+                                                    @elseif($minFee == $maxFee)
+                                                        <h4 class="price">{{ currency($minFee) }}</h4>
+                                                    @else
+                                                        <h4 class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</h4>
+                                                    @endif
+                                                @else
+                                                    <h4 class="price">{{ __('Contact for Price') }}</h4>
+                                                @endif
+                                            @endauth
                                         </div>
                                     </div>
                                 </div>
@@ -751,8 +856,8 @@
                                             @auth('web')
                                                 @if(userAuth()->role === 'instructor')
                                                     <div class="button">
-                                                        <a href="{{ route('instructor.dashboard') }}" class="">
-                                                            <span class="text">{{ __('Go to Dashboard') }}</span>
+                                                        <a href="{{ route('course.show', $course->slug) }}" class="">
+                                                            <span class="text">{{ __('View Course Details') }}</span>
                                                             <i class="flaticon-arrow-right"></i>
                                                         </a>
                                                     </div>
@@ -800,22 +905,43 @@
                                                     </div>
                                                 @endif
                                             @endauth
-                                            @php
-                                                $feeStructures = $course->courseFeeStructures ?? collect([]);
-                                                $minFee = $feeStructures->min('course_fee');
-                                                $maxFee = $feeStructures->max('course_fee');
-                                            @endphp
-                                            @if($feeStructures->count() > 0 && $minFee !== null)
-                                                @if($minFee == 0)
-                                                    <h4 class="price">{{ __('Free') }}</h4>
-                                                @elseif($minFee == $maxFee)
-                                                    <h4 class="price">{{ currency($minFee) }}</h4>
-                                                @else
-                                                    <h4 class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</h4>
+                                            @auth('web')
+                                                @if(userAuth()->role !== 'instructor')
+                                                    @php
+                                                        $feeStructures = $course->courseFeeStructures ?? collect([]);
+                                                        $minFee = $feeStructures->min('course_fee');
+                                                        $maxFee = $feeStructures->max('course_fee');
+                                                    @endphp
+                                                    @if($feeStructures->count() > 0 && $minFee !== null)
+                                                        @if($minFee == 0)
+                                                            <h4 class="price">{{ __('Free') }}</h4>
+                                                        @elseif($minFee == $maxFee)
+                                                            <h4 class="price">{{ currency($minFee) }}</h4>
+                                                        @else
+                                                            <h4 class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</h4>
+                                                        @endif
+                                                    @else
+                                                        <h4 class="price">{{ __('Contact for Price') }}</h4>
+                                                    @endif
                                                 @endif
                                             @else
-                                                <h4 class="price">{{ __('Contact for Price') }}</h4>
-                                            @endif
+                                                @php
+                                                    $feeStructures = $course->courseFeeStructures ?? collect([]);
+                                                    $minFee = $feeStructures->min('course_fee');
+                                                    $maxFee = $feeStructures->max('course_fee');
+                                                @endphp
+                                                @if($feeStructures->count() > 0 && $minFee !== null)
+                                                    @if($minFee == 0)
+                                                        <h4 class="price">{{ __('Free') }}</h4>
+                                                    @elseif($minFee == $maxFee)
+                                                        <h4 class="price">{{ currency($minFee) }}</h4>
+                                                    @else
+                                                        <h4 class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</h4>
+                                                    @endif
+                                                @else
+                                                    <h4 class="price">{{ __('Contact for Price') }}</h4>
+                                                @endif
+                                            @endauth
                                         </div>
                                     </div>
                                 </div>
