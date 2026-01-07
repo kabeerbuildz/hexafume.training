@@ -38,6 +38,7 @@ trait GenerateTranslationTrait
             $translationModel->$forignKey = $model->id;
             $translationModel->fill($validated);
             if ($customFields) {
+                $tr = false; // Initialize $tr to false
                 if ($translateField) {
                     try {
                         $tr = new GoogleTranslate($language->code);
