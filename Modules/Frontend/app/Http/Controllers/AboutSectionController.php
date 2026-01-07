@@ -48,7 +48,7 @@ class AboutSectionController extends Controller {
         $translation = SectionTranslation::where('section_id', $section->id)->exists();
 
         if (!$translation) {
-            $this->generateTranslations(TranslationModels::Section, $section, 'section_id', $request);
+            $this->generateTranslations(TranslationModels::Section, $section, 'section_id', $request, false, ['content' => $content]);
         }
 
         $this->updateTranslations($section, $request, $request->only('code'), ['content' => $content]);
