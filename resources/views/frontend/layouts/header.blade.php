@@ -236,16 +236,15 @@ $categories = \Illuminate\Support\Facades\Cache::remember('header_categories', 3
                                             </a>
                                         </li>
                                     @endauth
+                                    @auth('web')
                                     <li class="mini-cart-icon user-dropdown-wrapper">
                                         <a href="javascript:;" class="cart-count user-dropdown-trigger">
                                             <img src="{{ asset('frontend/img/icons/menu_user.svg') }}" alt="img">
-                                            @auth('web')
-                                                @if(userAuth()->image)
-                                                    <span class="user-avatar-mini">
-                                                        <img src="{{ asset(userAuth()->image) }}" alt="{{ userAuth()->name }}">
-                                                    </span>
-                                                @endif
-                                            @endauth
+                                            @if(userAuth()->image)
+                                                <span class="user-avatar-mini">
+                                                    <img src="{{ asset(userAuth()->image) }}" alt="{{ userAuth()->name }}">
+                                                </span>
+                                            @endif
                                         </a>
                                         <div class="user-dropdown-menu">
                                             @auth('admin')
@@ -260,23 +259,6 @@ $categories = \Illuminate\Support\Facades\Cache::remember('header_categories', 3
                                                 <i class="fas fa-chevron-right"></i>
                                             </a>
                                             @endauth
-                                            @guest
-                                            <div class="dropdown-header">
-                                                <i class="fas fa-user-circle"></i>
-                                                <span>{{ __('Account') }}</span>
-                                            </div>
-                                            <div class="dropdown-divider"></div>
-                                            <a href="{{ route('login') }}" class="dropdown-item">
-                                                <i class="fas fa-sign-in-alt"></i>
-                                                <span>{{ __('Sign in') }}</span>
-                                                <i class="fas fa-chevron-right"></i>
-                                            </a>
-                                            <a href="{{ route('register') }}" class="dropdown-item dropdown-item-primary">
-                                                <i class="fas fa-user-plus"></i>
-                                                <span>{{ __('Sign Up') }}</span>
-                                                <i class="fas fa-chevron-right"></i>
-                                            </a>
-                                            @else
                                             <div class="dropdown-profile">
                                                 <div class="profile-avatar">
                                                     <img src="{{ asset(userAuth()->image ?? Cache::get('setting')->default_avatar) }}" alt="{{ userAuth()->name }}">
@@ -309,9 +291,9 @@ $categories = \Illuminate\Support\Facades\Cache::remember('header_categories', 3
                                                 <span>{{ __('Logout') }}</span>
                                                 <i class="fas fa-chevron-right"></i>
                                             </a>
-                                            @endguest
                                         </div>
                                     </li>
+                                    @endauth
                                 </ul>
                             </div>
                             <div class="mobile-nav-toggler"><i class="tg-flaticon-menu-1"></i></div>
