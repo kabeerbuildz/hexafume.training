@@ -73,23 +73,45 @@
                             </div>
                         @endif
                     @endauth
-                    @php
-                        $feeStructures = $course->courseFeeStructures ?? collect([]);
-                        $minFee = $feeStructures->min('course_fee');
-                        $maxFee = $feeStructures->max('course_fee');
-                    @endphp
-                    @if($feeStructures->count() > 0 && $minFee !== null)
-                        @if($minFee == 0)
-                        <h5 class="price">{{ __('Free') }}</h5>
-                        @elseif($minFee == $maxFee)
-                            <h5 class="price">{{ currency($minFee) }}</h5>
-                        @else
-                            <h5 class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</h5>
+                    @auth('web')
+                        @if(userAuth()->role !== 'instructor')
+                            @php
+                                $feeStructures = $course->courseFeeStructures ?? collect([]);
+                                $minFee = $feeStructures->min('course_fee');
+                                $maxFee = $feeStructures->max('course_fee');
+                            @endphp
+                            @if($feeStructures->count() > 0 && $minFee !== null)
+                                @if($minFee == 0)
+                                <h5 class="price">{{ __('Free') }}</h5>
+                                @elseif($minFee == $maxFee)
+                                    <h5 class="price">{{ currency($minFee) }}</h5>
+                                @else
+                                    <h5 class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</h5>
+                                @endif
+                                <small class="text-muted d-block mt-1" style="font-size: 11px;">{{ __('Starting from') }}</small>
+                            @else
+                                <h5 class="price">{{ __('Contact for Price') }}</h5>
+                            @endif
                         @endif
-                        <small class="text-muted d-block mt-1" style="font-size: 11px;">{{ __('Starting from') }}</small>
                     @else
-                        <h5 class="price">{{ __('Contact for Price') }}</h5>
-                    @endif
+                        @php
+                            $feeStructures = $course->courseFeeStructures ?? collect([]);
+                            $minFee = $feeStructures->min('course_fee');
+                            $maxFee = $feeStructures->max('course_fee');
+                        @endphp
+                        @if($feeStructures->count() > 0 && $minFee !== null)
+                            @if($minFee == 0)
+                            <h5 class="price">{{ __('Free') }}</h5>
+                            @elseif($minFee == $maxFee)
+                                <h5 class="price">{{ currency($minFee) }}</h5>
+                            @else
+                                <h5 class="price">{{ currency($minFee) }} - {{ currency($maxFee) }}</h5>
+                            @endif
+                            <small class="text-muted d-block mt-1" style="font-size: 11px;">{{ __('Starting from') }}</small>
+                        @else
+                            <h5 class="price">{{ __('Contact for Price') }}</h5>
+                        @endif
+                    @endauth
                 </div>
             </div>
         </div>

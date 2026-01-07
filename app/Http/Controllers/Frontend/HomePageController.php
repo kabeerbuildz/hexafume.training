@@ -145,8 +145,21 @@ class HomePageController extends Controller {
         
         // Course data query - Simple courses fetch
         $courseData = [];
-        $courseData['allCourses'] = Course::active()
-            ->select('id', 'title', 'slug', 'thumbnail', 'category_id', 'instructor_id', 'capacity', 'status', 'is_approved')
+        $allCoursesQuery = Course::active()
+            ->select('id', 'title', 'slug', 'thumbnail', 'category_id', 'instructor_id', 'capacity', 'status', 'is_approved');
+        
+        // If logged-in user is an instructor, show only their assigned courses
+        if (auth()->guard('web')->check() && userAuth()->role === 'instructor') {
+            $instructorId = userAuth()->id;
+            $allCoursesQuery->where(function($q) use ($instructorId) {
+                $q->where('instructor_id', $instructorId)
+                  ->orWhereHas('partnerInstructors', function($q) use ($instructorId) {
+                      $q->where('instructor_id', $instructorId);
+                  });
+            });
+        }
+        
+        $courseData['allCourses'] = $allCoursesQuery
             ->with([
                 'favoriteBy' => function($q) {
                     if (auth()->guard('web')->check()) {

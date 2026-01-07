@@ -27,6 +27,18 @@ class CoursePageController extends Controller
     function fetchCourses(Request $request) {
         $query = Course::query();
         $query->where(['is_approved' => 'approved', 'status' => 'active']);
+        
+        // If logged-in user is an instructor, show only their assigned courses
+        if (auth()->guard('web')->check() && userAuth()->role === 'instructor') {
+            $instructorId = userAuth()->id;
+            $query->where(function($q) use ($instructorId) {
+                $q->where('instructor_id', $instructorId)
+                  ->orWhereHas('partnerInstructors', function($q) use ($instructorId) {
+                      $q->where('instructor_id', $instructorId);
+                  });
+            });
+        }
+        
         $query->whereHas('category.parentCategory', function($q) use ($request) {
             $q->where('status', 1);
         });

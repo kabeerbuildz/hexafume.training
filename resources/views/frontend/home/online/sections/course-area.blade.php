@@ -15,7 +15,7 @@
                                 $allCoursesIds = json_decode(
                                     $featuredCourse?->all_category_ids ? $featuredCourse->all_category_ids : '[]',
                                 );
-                                $allCourses = App\Models\Course::with([
+                                $allCoursesQuery = App\Models\Course::with([
                                     'favoriteBy',
                                     'category.translation', 
                                     'instructor:id,name',
@@ -23,7 +23,20 @@
                                         $q->where('status', 1);
                                     }
                                 ])
-                                    ->whereIn('id', $allCoursesIds)
+                                    ->whereIn('id', $allCoursesIds);
+                                
+                                // If logged-in user is an instructor, show only their assigned courses
+                                if (auth()->guard('web')->check() && userAuth()->role === 'instructor') {
+                                    $instructorId = userAuth()->id;
+                                    $allCoursesQuery->where(function($q) use ($instructorId) {
+                                        $q->where('instructor_id', $instructorId)
+                                          ->orWhereHas('partnerInstructors', function($q) use ($instructorId) {
+                                              $q->where('instructor_id', $instructorId);
+                                          });
+                                    });
+                                }
+                                
+                                $allCourses = $allCoursesQuery
                                     ->withCount([
                                         'reviews as avg_rating' => function ($query) {
                                             $query->select(DB::raw('coalesce(avg(rating), 0)'));
