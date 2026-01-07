@@ -4,18 +4,9 @@
     <style>
         .login-page-wrapper {
             min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
+            background: #ffffff;
             position: relative;
-            overflow: hidden;
             padding: 80px 0;
-        }
-        
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
         }
         
         .login-page-wrapper::before {
@@ -25,8 +16,10 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
-            opacity: 0.3;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.03) 0%, transparent 50%);
+            pointer-events: none;
         }
         
         .login-container {
@@ -35,41 +28,24 @@
         }
         
         .login-card {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1);
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.04);
             padding: 50px 40px;
             position: relative;
-            overflow: hidden;
             animation: slideUp 0.6s ease-out;
+            border: 1px solid #f0f0f0;
         }
         
         @keyframes slideUp {
             from {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translateY(20px);
             }
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
-        }
-        
-        .login-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
-            animation: rotate 20s linear infinite;
-        }
-        
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
         }
         
         .login-header {
@@ -80,37 +56,28 @@
         }
         
         .login-header .welcome-icon {
-            width: 80px;
-            height: 80px;
+            width: 72px;
+            height: 72px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 20px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 20px;
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-            animation: pulse 2s ease-in-out infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+            margin: 0 auto 24px;
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.25);
         }
         
         .login-header .welcome-icon i {
-            font-size: 40px;
+            font-size: 36px;
             color: white;
         }
         
         .login-header h2 {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 700;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: #1f2937;
             margin-bottom: 12px;
-            letter-spacing: -0.5px;
+            letter-spacing: -0.3px;
         }
         
         .login-header p {
@@ -127,9 +94,9 @@
         .account__social-btn {
             width: 100%;
             padding: 14px 20px;
-            background: white;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
+            background: #ffffff;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -137,15 +104,13 @@
             font-weight: 600;
             color: #374151;
             text-decoration: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
         }
         
         .account__social-btn:hover {
             border-color: #667eea;
             background: #f8f9ff;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
         }
         
         .account__divider {
@@ -205,20 +170,19 @@
         
         .form-grp input {
             width: 100%;
-            padding: 14px 18px;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
+            padding: 12px 16px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 10px;
             font-size: 15px;
-            transition: all 0.3s ease;
-            background: white;
+            transition: all 0.2s ease;
+            background: #ffffff;
             color: #111827;
         }
         
         .form-grp input:focus {
             outline: none;
             border-color: #667eea;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-            transform: translateY(-1px);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.08);
         }
         
         .form-grp input::placeholder {
@@ -269,46 +233,28 @@
         
         .login-submit-btn {
             width: 100%;
-            padding: 16px 24px;
+            padding: 14px 24px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
-            border-radius: 12px;
+            border-radius: 10px;
             color: white;
             font-size: 16px;
-            font-weight: 700;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .login-submit-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: left 0.5s ease;
-        }
-        
-        .login-submit-btn:hover::before {
-            left: 100%;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
         }
         
         .login-submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 32px rgba(102, 126, 234, 0.5);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.35);
         }
         
         .login-submit-btn:active {
-            transform: translateY(0);
+            transform: translateY(1px);
         }
         
         .login-submit-btn i {
